@@ -103,7 +103,6 @@ fn xor_binary_string(str1: String, str2: String) -> String {
     };
 
     for i in 0..max_len {
-
         let c1 = padded_str1.chars().nth(i).unwrap();
         let c2 = padded_str2.chars().nth(i).unwrap();
 
@@ -115,6 +114,10 @@ fn xor_binary_string(str1: String, str2: String) -> String {
     }
 
     res
+}
+
+fn substring(input: &str, start: usize, length: usize) -> String {
+    input.chars().skip(start).take(length).collect()
 }
 
 fn main() {
@@ -130,26 +133,111 @@ fn main() {
     // }
 
     let binary_str = "011110010110111101110101"; // Binary representation of "you"
-    // println!("ASCII text: {}", binary_to_ascii(binary_str.to_string()));
+                                                 // println!("ASCII text: {}", binary_to_ascii(binary_str.to_string()));
 
     let ascii = "you"; // Binary representation of "you"
-    // println!("ASCII text: {} , bin {}", ascii, ascii_to_binary(ascii));
-    // println!("ASCII text: {} , bin {}", ascii, text_to_binary(ascii));
+                       // println!("ASCII text: {} , bin {}", ascii, ascii_to_binary(ascii));
+                       // println!("ASCII text: {} , bin {}", ascii, text_to_binary(ascii));
 
     // println!("{}", xor(binary_str.to_string(), ascii_to_binary(ascii)));
 
     //We test line 1 XOR "The "
+    let test_text = "The ";
     let key = xor_binary_string(
         hex_to_bin(TEXT.lines().nth(0).unwrap()),
-        text_to_binary("The "),
+        text_to_binary(test_text),
     );
 
     // println!("key {}", key);
     for (i, line) in lines.clone().enumerate() {
+        let text = binary_to_ascii(xor_binary_string(hex_to_bin(line), key.to_string()));
+
         println!(
             "line {} first charracters: {}",
             i,
-            binary_to_ascii(xor_binary_string( hex_to_bin(line), key.to_string()))
+            substring(text.as_str(), 0, test_text.len())
+        );
+    }
+
+    //Then we get
+    // line 0 first charracters: The
+    // line 1 first charracters: Gove
+    // line 2 first charracters: Bitc
+    // line 3 first charracters: In o
+    // line 4 first charracters: As s
+    // line 5 first charracters: I be
+    // line 6 first charracters: Cryp
+    // line 7 first charracters: Not
+    // line 8 first charracters: Bitc
+    //Then we test Governement on line 1:
+
+    let test_text = "Government";
+    let key = xor_binary_string(
+        hex_to_bin(TEXT.lines().nth(1).unwrap()),
+        text_to_binary(test_text),
+    );
+
+    // println!("key {}", key);
+    for (i, line) in lines.clone().enumerate() {
+        let text = binary_to_ascii(xor_binary_string(hex_to_bin(line), key.to_string()));
+
+        println!(
+            "line {} first charracters: {}",
+            i,
+            substring(text.as_str(), 0, test_text.len())
+        );
+    }
+
+    //Then we get
+    // line 0 first charracters: The Times
+    // line 1 first charracters: Government
+    // line 2 first charracters: Bitcoin is
+    // line 3 first charracters: In order t
+    // line 4 first charracters: As society
+    // line 5 first charracters: I began to
+    // line 6 first charracters: Cryptocurr
+    // line 7 first charracters: Not your k
+    // line 8 first charracters: Bitcoin: A
+    let test_text = "Cryptocurrencies";
+    let key = xor_binary_string(
+        hex_to_bin(TEXT.lines().nth(6).unwrap()),
+        text_to_binary(test_text),
+    );
+
+    // println!("key {}", key);
+    for (i, line) in lines.clone().enumerate() {
+        let text = binary_to_ascii(xor_binary_string(hex_to_bin(line), key.to_string()));
+
+        println!(
+            "line {} first charracters: {}",
+            i,
+            substring(text.as_str(), 0, test_text.len())
+        );
+    }
+
+    // line 0 first charracters: The Times 03/Jan
+    // line 1 first charracters: Governments are
+    // line 2 first charracters: Bitcoin is great
+    // line 3 first charracters: In order to have
+    // line 4 first charracters: As society becom
+    // line 5 first charracters: I began to reali
+    // line 6 first charracters: Cryptocurrencies
+    // line 7 first charracters: Not your keys, N
+    // line 8 first charracters: Bitcoin: A purel
+    let test_text = "Cryptocurrenc";
+    let key = xor_binary_string(
+        hex_to_bin(TEXT.lines().nth(6).unwrap()),
+        text_to_binary(test_text),
+    );
+
+    // println!("key {}", key);
+    for (i, line) in lines.clone().enumerate() {
+        let text = binary_to_ascii(xor_binary_string(hex_to_bin(line), key.to_string()));
+
+        println!(
+            "line {} first charracters: {}",
+            i,
+            substring(text.as_str(), 0, test_text.len())
         );
     }
 }
