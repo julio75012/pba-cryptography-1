@@ -224,7 +224,33 @@ fn main() {
     // line 6 first charracters: Cryptocurrencies
     // line 7 first charracters: Not your keys, N
     // line 8 first charracters: Bitcoin: A purel
-    let test_text = "Cryptocurrenc";
+    let test_text = "As society becomes ";
+    let key = xor_binary_string(
+        hex_to_bin(TEXT.lines().nth(4).unwrap()),
+        text_to_binary(test_text),
+    );
+
+    // println!("key {}", key);
+    for (i, line) in lines.clone().enumerate() {
+        let text = binary_to_ascii(xor_binary_string(hex_to_bin(line), key.to_string()));
+
+        println!(
+            "line {} first charracters: {}",
+            i,
+            substring(text.as_str(), 0, test_text.len())
+        );
+    }
+
+    // line 0 first charracters: The Times 03/Jan/2009 Chancello
+    // line 1 first charracters: Governments are good at cutting
+    // line 2 first charracters: Bitcoin is great as a form of d
+    // line 3 first charracters: In order to have a decentralize
+    // line 4 first charracters: As society becomes more and mor
+    // line 5 first charracters: I began to realize new possibil
+    // line 6 first charracters: Cryptocurrencies allowed non-cu
+    // line 7 first charracters: Not your keys, Not your coins.
+    // line 8 first charracters: Bitcoin: A purely peer-to-peer
+    let test_text = "Cryptocurrencies allowed non-custodial exchange";
     let key = xor_binary_string(
         hex_to_bin(TEXT.lines().nth(6).unwrap()),
         text_to_binary(test_text),
