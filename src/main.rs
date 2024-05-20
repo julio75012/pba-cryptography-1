@@ -13,23 +13,108 @@ fn text_to_binary(string: &str) -> String {
         .chars()
         .map(|c| format!("{:b}", c as u8))
         .collect::<Vec<String>>()
-        .join(" ")
+        .join("")
 }
 
-fn hex_to_bin(hex_string: &str) -> Result<String, &'static str> {
-    if !hex_string.chars().all(|c| c.is_digit(16)) {
-        return Err("Invalid HEX string");
-    }
-
-    let binary_string = hex_string
+fn hex_to_bin(hex_string: &str) -> String {
+    hex_string
         .chars()
         .map(|c| {
             let decimal = c.to_digit(16).unwrap();
             format!("{:04b}", decimal)
         })
+        .collect::<String>()
+}
+
+fn binary_to_ascii(binary: String) -> String {
+    binary
+        .as_bytes()
+        .chunks(8)
+        .map(|chunk| {
+            let byte = std::str::from_utf8(chunk).unwrap();
+            u8::from_str_radix(byte, 2).unwrap() as char
+        })
+        .collect::<String>()
+}
+
+fn binary_to_text(binary: &str) -> String {
+    let text = binary
+        .as_bytes()
+        .chunks(8)
+        .map(|chunk| {
+            let byte_str = std::str::from_utf8(chunk).unwrap();
+            let byte = u8::from_str_radix(byte_str, 2).unwrap();
+            byte as char
+        })
         .collect::<String>();
 
-    Ok(binary_string)
+    text
+}
+
+fn ascii_to_binary(text: &str) -> String {
+    text.chars()
+        .map(|c| format!("{:08b}", c as u8))
+        .collect::<Vec<String>>()
+        .join("")
+}
+
+fn xor(b1: String, b2: String) -> String {
+    let length = std::cmp::min(b1.len(), b2.len());
+    let lenghth_of_0 = std::cmp::max(b1.len(), b2.len()) - length;
+    let mut result = String::new();
+
+    for i in 0..length {
+        let c1 = b1.chars().nth(i).unwrap();
+        let c2 = b2.chars().nth(i).unwrap();
+
+        if c1 == c2 {
+            result.push('0');
+        } else {
+            result.push('1');
+        }
+    }
+
+    for i in 0..lenghth_of_0 {
+        result.push('0');
+    }
+
+    result
+}
+
+fn xor_binary_string(str1: String, str2: String) -> String {
+    let mut res = String::new();
+    let len1 = str1.len();
+    let len2 = str2.len();
+    let max_len = std::cmp::max(len1, len2);
+
+    let padded_str1 = if len1 < max_len {
+        // println!("before padding: {}", str1);
+        format!("{:0<width$}", str1, width = max_len)
+    } else {
+        str1.to_string()
+    };
+
+    // println!("after padding : {}", padded_str1);
+
+    let padded_str2 = if len2 < max_len {
+        format!("{:0<width$}", str2, width = max_len)
+    } else {
+        str2.to_string()
+    };
+
+    for i in 0..max_len {
+
+        let c1 = padded_str1.chars().nth(i).unwrap();
+        let c2 = padded_str2.chars().nth(i).unwrap();
+
+        if c1 == c2 {
+            res.push('0');
+        } else {
+            res.push('1');
+        }
+    }
+
+    res
 }
 
 fn main() {
@@ -40,10 +125,29 @@ fn main() {
     let lines = TEXT.split('\n');
 
     // Iterate over each line and print it
-    for (i ,line) in lines.enumerate() {
-        match hex_to_bin(line) {
-            Ok(binary) => println!("Binary representation of line {}: {}",i, binary),
-            Err(e) => println!("Error: {}", e),
-        }
+    for (i, line) in lines.clone().enumerate() {
+        println!("Binary representation of line {}: {}", i, hex_to_bin(line))
+    }
+
+    let binary_str = "011110010110111101110101"; // Binary representation of "you"
+    println!("ASCII text: {}", binary_to_ascii(binary_str.to_string()));
+
+    let ascii = "you"; // Binary representation of "you"
+    println!("ASCII text: {} , bin {}", ascii, ascii_to_binary(ascii));
+    // println!("ASCII text: {} , bin {}", ascii, text_to_binary(ascii));
+
+    println!("{}", xor(binary_str.to_string(), ascii_to_binary(ascii)));
+
+    //We test line 1 XOR "The "
+    let key = xor_binary_string(
+        hex_to_bin(TEXT.lines().nth(0).unwrap()),
+        text_to_binary("The "),
+    );
+    for (i, line) in lines.clone().enumerate() {
+        println!(
+            "line {} first charracters: {}",
+            i,
+            binary_to_ascii(xor_binary_string(key.clone(), hex_to_bin(line)))
+        );
     }
 }
