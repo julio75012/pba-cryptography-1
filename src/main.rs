@@ -11,7 +11,7 @@ const TEXT: &str = "160111433b00035f536110435a380402561240555c526e1c0e431300091e
 fn text_to_binary(string: &str) -> String {
     string
         .chars()
-        .map(|c| format!("{:b}", c as u8))
+        .map(|c| format!("{:08b}", c as u8))
         .collect::<Vec<String>>()
         .join("")
 }
@@ -119,35 +119,37 @@ fn xor_binary_string(str1: String, str2: String) -> String {
 
 fn main() {
     let text = "The ";
-    let binary_text = text_to_binary(text);
-    println!("Binary representation of '{}': {}", text, binary_text);
+    let binary_text: String = text_to_binary(text);
+    // println!("Binary representation of '{}': {}", text, binary_text);
 
     let lines = TEXT.split('\n');
 
     // Iterate over each line and print it
-    for (i, line) in lines.clone().enumerate() {
-        println!("Binary representation of line {}: {}", i, hex_to_bin(line))
-    }
+    // for (i, line) in lines.clone().enumerate() {
+    //     println!("Binary representation of line {}: {}", i, hex_to_bin(line))
+    // }
 
     let binary_str = "011110010110111101110101"; // Binary representation of "you"
-    println!("ASCII text: {}", binary_to_ascii(binary_str.to_string()));
+    // println!("ASCII text: {}", binary_to_ascii(binary_str.to_string()));
 
     let ascii = "you"; // Binary representation of "you"
-    println!("ASCII text: {} , bin {}", ascii, ascii_to_binary(ascii));
+    // println!("ASCII text: {} , bin {}", ascii, ascii_to_binary(ascii));
     // println!("ASCII text: {} , bin {}", ascii, text_to_binary(ascii));
 
-    println!("{}", xor(binary_str.to_string(), ascii_to_binary(ascii)));
+    // println!("{}", xor(binary_str.to_string(), ascii_to_binary(ascii)));
 
     //We test line 1 XOR "The "
     let key = xor_binary_string(
         hex_to_bin(TEXT.lines().nth(0).unwrap()),
         text_to_binary("The "),
     );
+
+    // println!("key {}", key);
     for (i, line) in lines.clone().enumerate() {
         println!(
             "line {} first charracters: {}",
             i,
-            binary_to_ascii(xor_binary_string(key.clone(), hex_to_bin(line)))
+            binary_to_ascii(xor_binary_string( hex_to_bin(line), key.to_string()))
         );
     }
 }
